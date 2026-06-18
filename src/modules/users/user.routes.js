@@ -41,5 +41,11 @@ router.delete(
   checkRole(["ADMIN"]),
   userController.deleteUser
 );
+router.patch(
+  "/:userId",
+  verifyToken,
+  checkRole(["ADMIN"]),
+  userController.updateUserStatus
+);
 
 module.exports = router;
