@@ -22,6 +22,7 @@ enum UserStatus {
   ACTIVE
   INACTIVE
   SUSPENDED
+  BLOCKED
   
 }
 enum ContentType {

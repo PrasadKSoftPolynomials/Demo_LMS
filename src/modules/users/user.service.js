@@ -12,26 +12,17 @@ const getUsers = async () => {
   });
 };
 const updateUserRole = async (
-  req,
-  res,
-  next
+  userId,
+  role
 ) => {
-  try {
-    const user =
-      await userService.updateUserRole(
-        req.params.userId,
-        req.body.role
-      );
-
-    res.json({
-      success: true,
-      message:
-        "User role updated successfully",
-      data: user
-    });
-  } catch (error) {
-    next(error);
-  }
+  return await prisma.user.update({
+    where: {
+      id: userId
+    },
+    data: {
+      role
+    }
+  });
 };
 
 const getUserById = async (userId) => {
