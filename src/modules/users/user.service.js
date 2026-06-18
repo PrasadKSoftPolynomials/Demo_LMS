@@ -11,6 +11,28 @@ const getUsers = async () => {
     }
   });
 };
+const updateUserRole = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const user =
+      await userService.updateUserRole(
+        req.params.userId,
+        req.body.role
+      );
+
+    res.json({
+      success: true,
+      message:
+        "User role updated successfully",
+      data: user
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 const getUserById = async (userId) => {
   return await prisma.user.findUnique({
@@ -38,6 +60,19 @@ const updateUser = async (
     data
   });
 };
+const updateUserStatus = async (
+  userId,
+  status
+) => {
+  return await prisma.user.update({
+    where: {
+      id: userId
+    },
+    data: {
+      status
+    }
+  });
+};
 
 const deleteUser = async (
   userId
@@ -53,5 +88,7 @@ module.exports = {
   getUsers,
   getUserById,
   updateUser,
-  deleteUser
+  deleteUser,
+  updateUserRole,
+  updateUserStatus
 };

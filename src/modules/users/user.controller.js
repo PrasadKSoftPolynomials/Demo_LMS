@@ -37,6 +37,28 @@ const getUserById = async (
     next(error);
   }
 };
+const updateUserRole = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const user =
+      await userService.updateUserRole(
+        req.params.userId,
+        req.body.role
+      );
+
+    res.json({
+      success: true,
+      message:
+        "User role updated successfully",
+      data: user
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 const updateUser = async (
   req,
@@ -54,6 +76,28 @@ const updateUser = async (
       success: true,
       message:
         "User updated successfully",
+      data: user
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const updateUserStatus = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const user =
+      await userService.updateUserStatus(
+        req.params.userId,
+        req.body.status
+      );
+
+    res.json({
+      success: true,
+      message:
+        "User status updated successfully",
       data: user
     });
   } catch (error) {
@@ -85,5 +129,7 @@ module.exports = {
   getUsers,
   getUserById,
   updateUser,
-  deleteUser
+  deleteUser,
+  updateUserRole,
+  updateUserStatus
 };

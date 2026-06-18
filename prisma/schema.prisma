@@ -18,7 +18,12 @@ enum CourseStatus {
   PUBLISHED
   ARCHIVED
 }
-
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  
+}
 enum ContentType {
   VIDEO
   DOCUMENT
@@ -33,6 +38,7 @@ model User {
   name                 String
   email                String   @unique
   password             String
+  status    UserStatus  @default(ACTIVE)
 
   role                 Role     @default(STUDENT)
 
