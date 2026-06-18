@@ -28,21 +28,28 @@ enum ContentType {
 }
 
 model User {
-  id            String   @id @default(cuid())
-  name          String
-  email         String   @unique
-  password      String
+  id                   String   @id @default(cuid())
 
-  role          Role     @default(STUDENT)
+  name                 String
+  email                String   @unique
+  password             String
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  role                 Role     @default(STUDENT)
 
-  courses       Course[]
-  enrollments   Enrollment[]
-  reviews       Review[]
-  progress      Progress[]
-  certificates  Certificate[]
+  isVerified           Boolean  @default(false)
+  verificationToken    String?
+  refreshToken         String?
+  resetPasswordToken   String?
+  resetPasswordExpires DateTime?
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  courses              Course[]
+  enrollments          Enrollment[]
+  reviews              Review[]
+  progress             Progress[]
+  certificates         Certificate[]
 }
 
 model Course {
@@ -80,7 +87,8 @@ model Module {
   isPublished Boolean @default(false)
 
   courseId    String
-  course      Course @relation(fields: [courseId], references: [id])
+  
+  course Course @relation( fields: [courseId], references: [id], onDelete: Cascade)
 
   lessons     Lesson[]
 
@@ -101,8 +109,7 @@ model Lesson {
   isPublished Boolean @default(false)
 
   moduleId    String
-  module      Module @relation(fields: [moduleId], references: [id])
-
+  module Module @relation( fields: [moduleId],references: [id],onDelete: Cascade)
   contents    Content[]
   progress    Progress[]
 
@@ -118,7 +125,7 @@ model Content {
   order         Int
 
   lessonId      String
-  lesson        Lesson @relation(fields: [lessonId], references: [id])
+  lesson Lesson @relation(fields: [lessonId],references: [id],onDelete: Cascade)
 
   type          ContentType
 
@@ -144,8 +151,7 @@ model Enrollment {
   courseId   String
 
   user       User @relation(fields: [userId], references: [id])
-  course     Course @relation(fields: [courseId], references: [id])
-
+  course Course @relation(fields: [courseId],references: [id], onDelete: Cascade)
   enrolledAt DateTime @default(now())
 
   @@unique([userId, courseId])
@@ -178,7 +184,7 @@ model Quiz {
   timeLimit     Int?
 
   courseId      String
-  course        Course @relation(fields: [courseId], references: [id])
+  course Course @relation(fields: [courseId],references: [id], onDelete: Cascade)
 
   questions     Question[]
 
@@ -190,7 +196,7 @@ model Question {
   id            String   @id @default(cuid())
 
   quizId        String
-  quiz          Quiz @relation(fields: [quizId], references: [id])
+  quiz          Quiz @relation(fields: [quizId], references: [id],onDelete: Cascade)
 
   question      String
 

@@ -1,12 +1,24 @@
+
 const authService = require("./auth.service");
 
-const register = async (req, res, next) => {
+/**
+ * Register
+ */
+const register = async (
+  req,
+  res,
+  next
+) => {
   try {
-    const user = await authService.register(req.body);
+    const user =
+      await authService.register(
+        req.body
+      );
 
     res.status(201).json({
       success: true,
-      message: "User registered successfully",
+      message:
+        "User registered successfully",
       data: user
     });
   } catch (error) {
@@ -14,18 +26,28 @@ const register = async (req, res, next) => {
   }
 };
 
-const login = async (req, res, next) => {
+/**
+ * Login
+ */
+const login = async (
+  req,
+  res,
+  next
+) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } =
+      req.body;
 
-    const result = await authService.login(
-      email,
-      password
-    );
+    const result =
+      await authService.login(
+        email,
+        password
+      );
 
     res.json({
       success: true,
-      message: "Login successful",
+      message:
+        "Login successful",
       data: result
     });
   } catch (error) {
@@ -33,15 +55,166 @@ const login = async (req, res, next) => {
   }
 };
 
-const profile = async (req, res) => {
+/**
+ * Logout
+ */
+const logout = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const result =
+      await authService.logout(
+        req.user.id
+      );
+
+    res.json({
+      success: true,
+      message: result.message
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Profile
+ */
+const profile = async (
+  req,
+  res
+) => {
   res.json({
     success: true,
     data: req.user
   });
 };
 
+/**
+ * Verify Email
+ */
+const verifyEmail =
+  async (
+    req,
+    res,
+    next
+  ) => {
+    try {
+      const { token } =
+        req.params;
+
+      const result =
+        await authService.verifyEmail(
+          token
+        );
+
+      res.json({
+        success: true,
+        message:
+          result.message
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+/**
+ * Forgot Password
+ */
+const forgotPassword =
+  async (
+    req,
+    res,
+    next
+  ) => {
+    try {
+      const { email } =
+        req.body;
+
+      const result =
+        await authService.forgotPassword(
+          email
+        );
+
+      res.json({
+        success: true,
+        message:
+          result.message,
+        data: result
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+/**
+ * Reset Password
+ */
+const resetPassword =
+  async (
+    req,
+    res,
+    next
+  ) => {
+    try {
+      const {
+        token,
+        newPassword
+      } = req.body;
+
+      const result =
+        await authService.resetPassword(
+          token,
+          newPassword
+        );
+
+      res.json({
+        success: true,
+        message:
+          result.message
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+/**
+ * Refresh Token
+ */
+const refreshToken =
+  async (
+    req,
+    res,
+    next
+  ) => {
+    try {
+      const { refreshToken } =
+        req.body;
+
+      const result =
+        await authService.refreshToken(
+          refreshToken
+        );
+
+      res.json({
+        success: true,
+        message:
+          "Token refreshed successfully",
+        data: result
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
 module.exports = {
   register,
   login,
-  profile
+  logout,
+  profile,
+  verifyEmail,
+  forgotPassword,
+  resetPassword,
+  refreshToken
 };

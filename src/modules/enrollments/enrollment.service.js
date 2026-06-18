@@ -38,6 +38,23 @@ const createEnrollment = async (
   userId,
   courseId
 ) => {
+
+  const existing =
+    await prisma.enrollment.findUnique({
+      where: {
+        userId_courseId: {
+          userId,
+          courseId
+        }
+      }
+    });
+
+  if (existing) {
+    throw new Error(
+      "Student already enrolled"
+    );
+  }
+
   return prisma.enrollment.create({
     data: {
       userId,

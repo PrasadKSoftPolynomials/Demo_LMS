@@ -133,13 +133,20 @@ const updateStatus = async (
   courseId,
   status
 ) => {
+
+  const data = {
+    status
+  };
+
+  if (status === "PUBLISHED") {
+    data.publishedAt = new Date();
+  }
+
   return await prisma.course.update({
     where: {
       id: courseId
     },
-    data: {
-      status
-    }
+    data
   });
 };
 

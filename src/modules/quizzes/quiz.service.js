@@ -27,9 +27,17 @@ const getQuizById = async (
   });
 };
 
-const createQuiz = async (
-  data
-) => {
+const createQuiz = async (data) => {
+  const course = await prisma.course.findUnique({
+    where: {
+      id: data.courseId
+    }
+  });
+
+  if (!course) {
+    throw new Error("Course not found");
+  }
+
   return prisma.quiz.create({
     data
   });
