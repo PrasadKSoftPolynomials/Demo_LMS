@@ -23,7 +23,7 @@ router.post(
 );
 
 router.get(
-  "/verify-email/:token",
+  "/verify-email",
   authController.verifyEmail
 );
 

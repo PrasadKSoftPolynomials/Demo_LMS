@@ -1,82 +1,41 @@
 const nodemailer = require("nodemailer");
+console.log("SMTP_HOST =", process.env.SMTP_HOST);
+console.log("SMTP_PORT =", process.env.SMTP_PORT);
+console.log("SMTP_USER =", process.env.SMTP_USER);
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT),
+  secure: false, // true only for 465
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+  }
+});
 
-const transporter =
-  nodemailer.createTransport({
-    host: "smtp-relay.brevo.com",
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
-    },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 10000
+transporter.verify(function (error, success) {
+  if (error) {
+    console.log("SMTP ERROR:", error);
+  } else {
+    console.log("SMTP SERVER READY");
+  }
+});
+
+const sendVerificationEmail = async (email, token) => {
+  const verificationUrl =
+    `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
+
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to: email,
+    subject: "Verify Your Email",
+    html: `
+      <h2>Welcome to Orange Tree LMS</h2>
+      <p>Click below to verify your email:</p>
+      <a href="${verificationUrl}">
+        Verify Email
+      </a>
+    `
   });
-
-transporter.verify((err, success) => {
-  if (err) {
-    console.error(
-      "SMTP VERIFY ERROR:",
-      err
-    );
-  } else {
-    console.log(
-      "SMTP READY"
-    );
-  }
-});
-
-transporter.verify((err, success) => {
-  if (err) {
-    console.error(
-      "SMTP VERIFY ERROR:",
-      err
-    );
-  } else {
-    console.log(
-      "SMTP READY"
-    );
-  }
-});
-const sendVerificationEmail =
-  async (
-    email,
-    name,
-    verificationToken
-  ) => {
-    const verificationUrl =
-      `${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}`;
-
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject:
-        "Verify Your Orange LMS Account",
-      html: `
-        <h2>Hello ${name},</h2>
-        <p>Thank you for registering.</p>
-        <p>Please verify your email by clicking the button below:</p>
-
-        <a
-          href="${verificationUrl}"
-          style="
-            background:#f97316;
-            color:white;
-            padding:12px 24px;
-            text-decoration:none;
-            border-radius:5px;
-          "
-        >
-          Verify Email
-        </a>
-
-        <p>If the button doesn't work:</p>
-        <p>${verificationUrl}</p>
-      `
-    });
-  };
-
-module.exports = {
-  sendVerificationEmail
 };
+
+module.exports = { sendVerificationEmail };

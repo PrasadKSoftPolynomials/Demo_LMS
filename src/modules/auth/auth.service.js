@@ -51,98 +51,24 @@ const generateRefreshToken = (user) => {
  * Register User
  */
 const register = async (data) => {
-  const {
-    name,
-    email,
-    password,
-    role
-  } = data;
+  const hashedPassword = await bcrypt.hash(data.password, 10);
 
-  const existingUser =
-    await prisma.user.findUnique({
-      where: { email }
-    });
+  const token = crypto.randomBytes(32).toString("hex");
 
-  // User already exists
-  if (existingUser) {
-    // Already verified
-    if (existingUser.isVerified) {
-      throw new Error(
-        "Email already registered"
-      );
+  const user = await prisma.user.create({
+    data: {
+      name: data.name,
+      email: data.email,
+      password: hashedPassword,
+      verificationToken: token
     }
+  });
 
-    // Not verified → resend verification email
-    const verificationToken =
-      crypto
-        .randomBytes(32)
-        .toString("hex");
-
-    await prisma.user.update({
-      where: {
-        id: existingUser.id
-      },
-      data: {
-        verificationToken
-      }
-    });
-
-   try {
-  await sendVerificationEmail(
-    user.email,
-    user.name,
-    verificationToken
-  );
-} catch (err) {
-  console.error(
-    "EMAIL FAILED:",
-    err.message
-  );
-}
-
-    return {
-      message:
-        "Account already exists but is not verified. Verification email sent again."
-    };
-  }
-
-  // Create new user
-  const hashedPassword =
-    await bcrypt.hash(password, 10);
-
-  const verificationToken =
-    crypto
-      .randomBytes(32)
-      .toString("hex");
-
-  const user =
-    await prisma.user.create({
-      data: {
-        name,
-        email,
-        password:
-          hashedPassword,
-        role,
-        verificationToken,
-        isVerified: false
-      }
-    });
-
-  await sendVerificationEmail(
-    user.email,
-    user.name,
-    verificationToken
-  );
+  await sendVerificationEmail(user.email, token);
 
   return {
     message:
-      "Registration successful. Please check your email.",
-    user: {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role
-    }
+      "Registration successful. Please verify email."
   };
 };
 /**
@@ -211,50 +137,32 @@ const login = async (
 /**
  * Verify Email
  */
-const verifyEmail = async (
-  token
-) => {
-  const user =
-    await prisma.user.findFirst({
-      where: {
-        verificationToken:
-          token
-      }
-    });
+const verifyEmail = async (req, res) => {
+  const { token } = req.query;
 
-  if (!user) {
-    throw new Error(
-      "Invalid verification token"
-    );
-  }
-
-  if (
-    !user.verificationTokenExpiry ||
-    user.verificationTokenExpiry <
-      new Date()
-  ) {
-    throw new Error(
-      "Verification link has expired. Please register again."
-    );
-  }
-
-  await prisma.user.update({
+  const user = await prisma.user.findFirst({
     where: {
-      id: user.id
-    },
-    data: {
-      isVerified: true,
-      verificationToken:
-        null,
-      verificationTokenExpiry:
-        null
+      verificationToken: token
     }
   });
 
-  return {
-    message:
-      "Email verified successfully"
-  };
+  if (!user) {
+    return res.status(400).json({
+      message: "Invalid token"
+    });
+  }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      isEmailVerified: true,
+      verificationToken: null
+    }
+  });
+
+  res.json({
+    message: "Email verified successfully"
+  });
 };
 /**
  * Forgot Password
