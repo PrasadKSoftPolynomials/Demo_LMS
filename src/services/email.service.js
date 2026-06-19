@@ -6,8 +6,8 @@ const transporter =
     port: 587,
     secure: false,
     auth: {
-      user: process.env.BREVO_USER,
-      pass: process.env.BREVO_PASS
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS
     },
     connectionTimeout: 10000,
     greetingTimeout: 10000,
