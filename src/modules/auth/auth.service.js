@@ -87,11 +87,18 @@ const register = async (data) => {
       }
     });
 
-    await sendVerificationEmail(
-      existingUser.email,
-      existingUser.name,
-      verificationToken
-    );
+   try {
+  await sendVerificationEmail(
+    user.email,
+    user.name,
+    verificationToken
+  );
+} catch (err) {
+  console.error(
+    "EMAIL FAILED:",
+    err.message
+  );
+}
 
     return {
       message:
