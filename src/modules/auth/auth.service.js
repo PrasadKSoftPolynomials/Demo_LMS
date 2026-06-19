@@ -5,6 +5,13 @@ const prisma = require("../../config/database");
 const {
   sendVerificationEmail
 } = require("../../services/email.service");
+
+console.log(
+  "sendVerificationEmail:",
+  sendVerificationEmail
+);
+
+
 /**
  * Generate Access Token
  */
