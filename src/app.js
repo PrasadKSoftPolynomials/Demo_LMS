@@ -9,6 +9,10 @@ const errorHandler = require("./middleware/error.middleware");
   //require(
     //"../../middleware/moduleOwnership.middleware"
   //);
+
+  const dashboardRoutes = require(
+  "./modules/dashboard/dashboard.routes"
+);
 const authRoutes = require("./modules/auth/auth.routes");
 const userRoutes = require("./modules/users/user.routes");
 const courseRoutes = require("./modules/courses/course.routes");
@@ -38,7 +42,7 @@ app.get("/", (req, res) => {
   });
 });
 
-
+app.use("/dashboard", dashboardRoutes);
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/courses", courseRoutes);
