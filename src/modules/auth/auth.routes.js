@@ -22,10 +22,10 @@ router.post(
   authController.login
 );
 
-router.get(
-  "/verify-email",
-  authController.verifyEmail
-);
+// router.get(
+//   "/verify-email",
+//   authController.verifyEmail
+// );
 
 router.post(
   "/forgot-password",

@@ -2,14 +2,14 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const prisma = require("../../config/database");
-const {
-  sendVerificationEmail
-} = require("../../services/email.service");
+// const {
+//   sendVerificationEmail
+// } = require("../../services/email.service");
 
-console.log(
-  "sendVerificationEmail:",
-  sendVerificationEmail
-);
+// console.log(
+//   "sendVerificationEmail:",
+//   sendVerificationEmail
+// );
 
 
 /**
@@ -59,17 +59,19 @@ const register = async (data) => {
     data: {
       name: data.name,
       email: data.email,
+      phoneNumber : data.phoneNumber,
+      address : data.address,
       password: hashedPassword,
       verificationToken: token
     }
   });
 
-  await sendVerificationEmail(user.email, token);
+  // await sendVerificationEmail(user.email, token);
 
-  return {
-    message:
-      "Registration successful. Please verify email."
-  };
+  // return {
+  //   message:
+  //     "Registration successful."
+  // };
 };
 /**
  * Login User
@@ -101,13 +103,13 @@ const login = async (
     );
   }
 
-  if (
-    user.isVerified === false
-  ) {
-    throw new Error(
-      "Please verify your email first"
-    );
-  }
+  // if (
+  //   user.isVerified === false
+  // ) {
+  //   throw new Error(
+  //     "Please verify your email first"
+  //   );
+  // }
 
   const accessToken =
     generateAccessToken(user);
@@ -137,33 +139,33 @@ const login = async (
 /**
  * Verify Email
  */
-const verifyEmail = async (req, res) => {
-  const { token } = req.query;
+// const verifyEmail = async (req, res) => {
+//   const { token } = req.query;
 
-  const user = await prisma.user.findFirst({
-    where: {
-      verificationToken: token
-    }
-  });
+//   const user = await prisma.user.findFirst({
+//     where: {
+//       verificationToken: token
+//     }
+//   });
 
-  if (!user) {
-    return res.status(400).json({
-      message: "Invalid token"
-    });
-  }
+//   if (!user) {
+//     return res.status(400).json({
+//       message: "Invalid token"
+//     });
+//   }
 
-  await prisma.user.update({
-    where: { id: user.id },
-    data: {
-      isEmailVerified: true,
-      verificationToken: null
-    }
-  });
+//   await prisma.user.update({
+//     where: { id: user.id },
+//     data: {
+//       isEmailVerified: true,
+//       verificationToken: null
+//     }
+//   });
 
-  res.json({
-    message: "Email verified successfully"
-  });
-};
+//   res.json({
+//     message: "Email verified successfully"
+//   });
+// };
 /**
  * Forgot Password
  */
@@ -329,7 +331,7 @@ module.exports = {
   register,
   login,
   logout,
-  verifyEmail,
+  //verifyEmail,
   forgotPassword,
   resetPassword,
   refreshToken

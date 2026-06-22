@@ -94,30 +94,30 @@ const profile = async (
 /**
  * Verify Email
  */
-const verifyEmail =
-  async (
-    req,
-    res,
-    next
-  ) => {
-    try {
-      const { token } =
-        req.params;
+// const verifyEmail =
+//   async (
+//     req,
+//     res,
+//     next
+//   ) => {
+//     try {
+//       const { token } =
+//         req.params;
 
-      const result =
-        await authService.verifyEmail(
-          token
-        );
+//       const result =
+//         await authService.verifyEmail(
+//           token
+//         );
 
-      res.json({
-        success: true,
-        message:
-          result.message
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
+//       res.json({
+//         success: true,
+//         message:
+//           result.message
+//       });
+//     } catch (error) {
+//       next(error);
+//     }
+//   };
 
 /**
  * Forgot Password
@@ -213,7 +213,7 @@ module.exports = {
   login,
   logout,
   profile,
-  verifyEmail,
+  //verifyEmail,
   forgotPassword,
   resetPassword,
   refreshToken
